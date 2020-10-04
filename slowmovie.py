@@ -40,7 +40,7 @@ def is_file_mp4(file_name):
     return false
 
 def is_file_hidden(file_name):
-    if file.startswith('.'):
+    if file_name.startswith('.'):
         return true
     return false
 
