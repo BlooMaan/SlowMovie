@@ -36,13 +36,13 @@ def check_mp4(value):
 
 def is_file_mp4(file_name):
     if file_name.endswith('.mp4'):
-        return true
-    return false
+        return True
+    return False
 
 def is_file_hidden(file_name):
     if file_name.startswith('.'):
-        return true
-    return false
+        return True
+    return False
 
 def get_movie_list(directory, logdir):
     movieList = []
@@ -123,10 +123,10 @@ except:
     f.write(currentVideo)
     f.close()    
 
-videoExists = false
+videoExists = False
 for movie in movieList:
     if movie == currentVideo: 
-        videoExists = true
+        videoExists = True
         break
 
 if videoExists:  
