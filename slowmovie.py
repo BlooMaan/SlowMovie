@@ -50,6 +50,7 @@ parser.add_argument('-i', '--inc',  default=4,
     help="Number of frames skipped between screen updates")
 parser.add_argument('-s', '--start',  
     help="Start at a specific frame")
+parser.add_argument('-m', '--viddir', help='Define the video directory')
 args = parser.parse_args()
 
 frameDelay = float(args.delay)
@@ -57,6 +58,12 @@ print("Frame Delay = %f" %frameDelay )
 
 increment = float(args.inc)
 print("Increment = %f" %increment )
+
+if args.viddir:
+    if os.path.exists(args.viddir):
+        viddir = args.viddir
+    else:
+        print("Viddir doesn't exist")
 
 if args.random:
     print("In random mode")
@@ -107,7 +114,7 @@ movieList = []
 # log files store the current progress for all the videos available 
 
 for file in os.listdir(viddir):
-    if not file.startswith('.'):
+    if not file.startswith('.') and file.endswith('.mp4'):
         movieList.append(file)
         try: 
             log = open(logdir +'%s<progress'%file)
