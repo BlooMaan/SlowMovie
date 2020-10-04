@@ -30,9 +30,34 @@ def generate_frame(in_filename, out_filename, time, width, height):
     )
 
 def check_mp4(value):
-    if not value.endswith('.mp4'):
+    if not file_is_mp4(value):
         raise argparse.ArgumentTypeError("%s should be an .mp4 file" % value)
     return value
+
+def is_file_mp4(file_name):
+    if file_name.endswith('.mp4'):
+        return true
+    return false
+
+def is_file_hidden(file_name):
+    if file.startswith('.'):
+        return true
+    return false
+
+def get_movie_list(directory, logdir):
+    movieList = []
+    # log files store the current progress for all the videos available 
+    for file in os.listdir(directory):
+        if (not is_file_hidden(file)) and is_file_mp4(file):
+            movieList.append(file)
+            try: 
+                log = open(logdir +'%s<progress'%file)
+                log.close()
+            except: 
+                log = open(logdir + '%s<progress' %file, "w")
+                log.write("0")
+                log.close()
+    return movieList
 
 # Ensure this is the correct path to your video folder 
 viddir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'Videos/')
@@ -74,13 +99,17 @@ if args.file:
     print('Try to start playing %s' %args.file)
 else: 
     print ("Continue playing existing file")
+    
+# Fetch List of MP4s
+movieList = get_movie_list(viddir, logdir)
+print (movieList)
+
+if not movieList:
+    print('No video files in %s' %viddir)
+    exit()
 
 # Scan through video folder until you find an .mp4 file 
-currentVideo = ""
-videoTry = 0 
-while not (currentVideo.endswith('.mp4')):
-    currentVideo = os.listdir(viddir)[videoTry]
-    videoTry = videoTry + 1 
+currentVideo = movieList[0]
 
 # the nowPlaying file stores the current video file 
 # if it exists and has a valid video, switch to that 
@@ -94,37 +123,21 @@ except:
     f.write(currentVideo)
     f.close()    
 
-videoExists = 0 
-for file in os.listdir(viddir):
-    if file == currentVideo: 
-        videoExists = 1
+videoExists = false
+for movie in movieList:
+    if movie == currentVideo: 
+        videoExists = true
+        break
 
-if videoExists > 0:  
+if videoExists:  
     print("The current video is %s" %currentVideo)
-elif videoExists == 0: 
+else:
     print('error')
-    currentVideo = os.listdir(viddir)[0]
+    currentVideo = movieList[0]
     f = open('nowPlaying', 'w')
     f.write(currentVideo)
     f.close() 
     print("The current video is %s" %currentVideo)
-
-movieList = []
-
-# log files store the current progress for all the videos available 
-
-for file in os.listdir(viddir):
-    if not file.startswith('.') and file.endswith('.mp4'):
-        movieList.append(file)
-        try: 
-            log = open(logdir +'%s<progress'%file)
-            log.close()
-        except: 
-            log = open(logdir + '%s<progress' %file, "w")
-            log.write("0")
-            log.close()
-
-print (movieList)
 
 if args.file: 
     if args.file in movieList:
